@@ -17,4 +17,6 @@ public interface IPodcastService {
 
 	List<PodcastListagemDTO> listar() throws Exception;
 
+	Podcast buscar(Integer id) throws Exception;
+
 }

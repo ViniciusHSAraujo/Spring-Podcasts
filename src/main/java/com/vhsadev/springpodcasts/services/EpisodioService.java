@@ -20,7 +20,7 @@ import com.vhsadev.springpodcasts.services.interfaces.IPodcastService;
 import javassist.NotFoundException;
 
 @Service
-public class PodcastService implements IPodcastService {
+public class EpisodioService implements IPodcastService {
 
 	@Autowired
 	PodcastRepository podcastRepository;

@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -27,6 +28,17 @@ public class PodcastController {
 	@Autowired
 	IPodcastService podcastService;
 
+	@GetMapping("{id}")
+	public ResponseEntity<ResponseDTO<?>> buscar(@PathVariable("id") Integer id) {
+		try {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(new ResponseDTO<List<Categoria>>("Podcast encontrado", podcastService.buscar(id)));
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+					.body(new ResponseDTO<List<Categoria>>(e.getMessage(), null));
+		}
+	}
+	
 	@GetMapping
 	public ResponseEntity<ResponseDTO<?>> listar() {
 		try {
@@ -44,17 +56,18 @@ public class PodcastController {
 			return ResponseEntity.status(HttpStatus.OK).body(
 					new ResponseDTO<Categoria>("Podcast cadastrado com sucesso!", podcastService.cadastrar(podcast)));
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND)
-					.body(new ResponseDTO<List<String>>(e.getMessage(), null));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new ResponseDTO<List<String>>("Não foi possível cadastrar o podcast!", e.getMessage()));
 		}
 	}
 
 	@PutMapping
 	public ResponseEntity<?> editar(@RequestBody PodcastEdicaoDTO podcast) {
 		try {
-			return ResponseEntity.ok().body(podcastService.editar(podcast));
+			return ResponseEntity.status(HttpStatus.OK).body(podcastService.editar(podcast));
 		} catch (Exception e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+					.body(new ResponseDTO<List<String>>("Não foi possível editar o podcast!", e.getMessage()));
 		}
 	}
 
@@ -65,7 +78,7 @@ public class PodcastController {
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(new ResponseDTO<String>("Podcast excluído com sucesso.", null));
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND)
+			return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE)
 					.body(new ResponseDTO<List<String>>(e.getMessage(), null));
 		}
 	}
